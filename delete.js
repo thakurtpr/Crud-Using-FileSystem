@@ -1,0 +1,35 @@
+const fs = require("fs");
+
+module.exports = (req, res) => {
+  if (req.url == "/deletedata") {
+    try {
+      let Data = "";
+
+      req.on("data", (incomingData) => {
+        Data += incomingData.toString();
+      });
+
+      req.on("end", () => {
+        fs.unlinkSync("./dummyFile.txt");
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(
+          JSON.stringify({
+            success: true,
+            Message: "Data appended Successfully",
+          })
+        );
+      });
+    } catch (error) {
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end("Internal Server Error");
+    }
+  } else {
+    res.writeHead(404, { "Content-Type": "application/json" });
+    res.end(
+      JSON.stringify({
+        success: false,
+        message: "Not Found",
+      })
+    );
+  }
+};
